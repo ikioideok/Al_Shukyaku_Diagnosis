@@ -304,22 +304,45 @@ export default function AIAttendanceDiagnosisLanding() {
 
       {showPdf ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="relative h-[80vh] w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+          <div className="relative flex h-[80vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
               <p className="text-sm font-semibold text-slate-900">診断結果レポート サンプル</p>
-              <button
-                type="button"
-                onClick={() => setShowPdf(false)}
-                className="rounded-full px-3 py-1 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
-              >
-                閉じる
-              </button>
+              <div className="flex items-center gap-2">
+                <a
+                  href={`${import.meta.env.BASE_URL}SEO_Report_sample.pdf`}
+                  className="rounded-full px-3 py-1 text-sm font-semibold text-slate-600 underline decoration-slate-300 underline-offset-2 transition hover:bg-slate-100 hover:decoration-slate-500"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  別タブで開く
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setShowPdf(false)}
+                  className="rounded-full px-3 py-1 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                >
+                  閉じる
+                </button>
+              </div>
             </div>
-            <iframe
-              title="診断結果レポート サンプル"
-              src={`${import.meta.env.BASE_URL}SEO_Report_sample.pdf`}
+            <object
+              data={`${import.meta.env.BASE_URL}SEO_Report_sample.pdf`}
+              type="application/pdf"
               className="h-full w-full"
-            />
+            >
+              <div className="p-4 text-sm text-slate-600">
+                PDFを表示できませんでした。{" "}
+                <a
+                  href={`${import.meta.env.BASE_URL}SEO_Report_sample.pdf`}
+                  className="font-semibold text-sky-700 underline decoration-sky-300 underline-offset-2 hover:text-sky-900"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  こちら
+                </a>
+                から開いてください。
+              </div>
+            </object>
           </div>
         </div>
       ) : null}
