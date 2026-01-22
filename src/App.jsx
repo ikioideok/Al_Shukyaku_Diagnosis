@@ -1,5 +1,8 @@
 import { useMemo, useState } from "react";
 
+// Google Apps ScriptのWebアプリURL（デプロイ後に設定）
+const GAS_URL = import.meta.env.VITE_GAS_URL || "";
+
 function normalizeUrlForValidation(raw) {
   const trimmed = raw.trim();
   if (!trimmed) return "";
@@ -16,6 +19,8 @@ export default function AIAttendanceDiagnosisLanding() {
   const [url, setUrl] = useState("");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [touched, setTouched] = useState({ url: false, email: false });
   const [showPdf, setShowPdf] = useState(false);
 
@@ -47,11 +52,42 @@ export default function AIAttendanceDiagnosisLanding() {
 
   const hasErrors = Boolean(errors.url || errors.email);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setTouched({ url: true, email: true });
+    setSubmitError("");
     if (hasErrors) return;
-    setSubmitted(true);
+
+    // GAS URLが設定されていない場合は警告
+    if (!GAS_URL) {
+      console.warn("GAS_URL is not set. Data will not be saved to spreadsheet.");
+      setSubmitted(true);
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const response = await fetch(GAS_URL, {
+        method: "POST",
+        mode: "no-cors", // GASのCORS制限を回避
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: url.trim(),
+          email: email.trim(),
+        }),
+      });
+
+      // no-corsモードではレスポンスを読めないが、送信は成功している
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Submit error:", error);
+      setSubmitError("送信に失敗しました。もう一度お試しください。");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -59,6 +95,7 @@ export default function AIAttendanceDiagnosisLanding() {
     setEmail("");
     setTouched({ url: false, email: false });
     setSubmitted(false);
+    setSubmitError("");
   };
 
   return (
@@ -178,13 +215,28 @@ export default function AIAttendanceDiagnosisLanding() {
                         )}
                       </div>
 
+                      {submitError && (
+                        <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
+                          <p className="text-sm text-rose-600">{submitError}</p>
+                        </div>
+                      )}
+
                       <button
                         type="submit"
                         className="group relative w-full rounded-2xl bg-gradient-to-r from-sky-600 to-indigo-600 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-sky-200/60 transition hover:brightness-110 focus:outline-none focus:ring-4 focus:ring-sky-200 disabled:cursor-not-allowed disabled:opacity-60"
-                        disabled={hasErrors && (touched.url || touched.email)}
+                        disabled={(hasErrors && (touched.url || touched.email)) || submitting}
                         onClick={() => setTouched({ url: true, email: true })}
                       >
-                        <span className="relative">診断結果を受け取る</span>
+                        <span className="relative">
+                          {submitting ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <LoadingSpinner />
+                              送信中...
+                            </span>
+                          ) : (
+                            "診断結果を受け取る"
+                          )}
+                        </span>
                         <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 ring-1 ring-white/40 transition group-hover:opacity-100" />
                       </button>
 
@@ -296,6 +348,26 @@ function CheckIcon() {
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function LoadingSpinner() {
+  return (
+    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       />
     </svg>
   );
