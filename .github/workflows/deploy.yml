@@ -1,0 +1,34 @@
+name: Deploy to Sakura
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.SAKURA_FTP_SERVER }}
+          username: ${{ secrets.SAKURA_FTP_USER }}
+          password: ${{ secrets.SAKURA_FTP_PASSWORD }}
+          local-dir: dist/
+          server-dir: ${{ secrets.SAKURA_FTP_TARGET_DIR }}
