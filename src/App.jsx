@@ -99,7 +99,7 @@ export default function AIAttendanceDiagnosisLanding() {
                 </p>
 
                 <a
-                  href="/SEO_Report_sample.pdf"
+                  href={`${import.meta.env.BASE_URL}SEO_Report_sample.pdf`}
                   className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-teal-700 underline decoration-teal-300 underline-offset-4 transition hover:text-teal-800 hover:decoration-teal-500"
                   onClick={(e) => {
                     e.preventDefault();
@@ -265,7 +265,7 @@ export default function AIAttendanceDiagnosisLanding() {
             </div>
             <iframe
               title="診断結果レポート サンプル"
-              src="/SEO_Report_sample.pdf"
+              src={`${import.meta.env.BASE_URL}SEO_Report_sample.pdf`}
               className="h-full w-full"
             />
           </div>
