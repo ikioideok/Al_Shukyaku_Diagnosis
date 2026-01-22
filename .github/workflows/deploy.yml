@@ -31,4 +31,4 @@ jobs:
           username: violetsheep5
           password: ${{ secrets.SAKURA_FTP_PASSWORD }}
           local-dir: dist/
-          server-dir: /www/ai_syukyaku_diagnosis/
+          server-dir: ./www/ai_syukyaku_diagnosis/
