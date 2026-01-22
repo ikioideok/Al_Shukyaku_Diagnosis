@@ -30,5 +30,7 @@ jobs:
           server: violetsheep5.sakura.ne.jp
           username: violetsheep5
           password: ${{ secrets.SAKURA_FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
           local-dir: dist/
           server-dir: ./www/ai_syukyaku_diagnosis/
