@@ -27,8 +27,8 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.SAKURA_FTP_SERVER }}
-          username: ${{ secrets.SAKURA_FTP_USER }}
+          server: violetsheep5.sakura.ne.jp
+          username: violetsheep5
           password: ${{ secrets.SAKURA_FTP_PASSWORD }}
           local-dir: dist/
-          server-dir: ${{ secrets.SAKURA_FTP_TARGET_DIR }}
+          server-dir: /www/ai_syukyaku_diagnosis/
