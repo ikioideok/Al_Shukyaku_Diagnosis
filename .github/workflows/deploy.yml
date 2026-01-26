@@ -25,6 +25,7 @@ jobs:
         run: npm run build
         env:
           VITE_GAS_URL: ${{ secrets.VITE_GAS_URL }}
+          VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
